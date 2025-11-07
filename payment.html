@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ALz Test – Оплата результата</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom right, #eaf3ff, #ffffff);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      text-align: center;
+    }
+
+    header {
+      background: linear-gradient(135deg, #003366, #0055a5);
+      color: white;
+      padding: 2rem 1rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .payment-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2.5rem 2rem;
+      max-width: 600px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      transition: opacity 0.3s ease;
+    }
+
+    h2 { margin-bottom: 1rem; font-size: 1.6rem; }
+    p { font-size: 1.05rem; margin-bottom: 1.5rem; }
+
+    button.button {
+      display: inline-block;
+      padding: 1rem 1.7rem;
+      background: #0078d7;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      font-size: 1.1rem;
+    }
+
+    button.button:hover {
+      background: #005bb5;
+      transform: translateY(-2px);
+    }
+
+    footer {
+      background: #f1f1f1;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    a.link {
+      color: #0055a5;
+      text-decoration: underline;
+    }
+    a.link:hover {
+      color: #003366;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Тест ALz</h1>
+  </header>
+
+  <main>
+    <div class="payment-box" id="paymentBox">
+      <h2>Тест завершён</h2>
+      <p>Спасибо за прохождение теста ALz! Чтобы просмотреть ваш результат и получить рекомендации, оплатите интерпретацию теста.</p>
+
+      <!-- Button to trigger Stripe Checkout -->
+      <button class="button" onclick="payWithStripe()">Оплатить $9.99</button>
+
+      <p style="margin-top: 1.5rem; font-size: 0.85rem; color: #555;">
+        🔒 Платёж будет обработан безопасно через Stripe. После оплаты вы будете перенаправлены на страницу с результатом.
+      </p>
+
+      <p class="recommendation" style="margin-top: 1.5rem; font-size: 0.95rem; color: #444; text-align:left;">
+        🕒 <strong>Рекомендация:</strong> Для отслеживания динамики повторяйте тест не чаще одного раза в 1–2 месяца.
+      </p>
+
+      <p style="font-size: 0.85rem; color: #555; margin-top: 1.5rem;">
+        ⚠️ <strong>Важно:</strong> Тест не заменяет консультацию врача. При сомнениях по поводу памяти — обратитесь к специалисту.
+      </p>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 ClinicalSelfie Inc. Все права защищены. ALz Test — продукт компании ClinicalSelfie Inc.</p>
+  </footer>
+
+  <!-- Stripe Checkout Integration: placed at the bottom for best practice -->
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+    const stripe = Stripe("pk_live_T4i52byhECGe4FSNcO8NaZSk");
+
+    function payWithStripe() {
+      stripe.redirectToCheckout({
+        lineItems: [{ price: "price_1SQf3lBYg24sYSSeW9aDGMje", quantity: 1 }],
+        mode: "payment",
+        successUrl: window.location.origin + "/result.html",
+        cancelUrl: window.location.origin + "/payment.html",
+      }).then(function (result) {
+        if (result.error) {
+          alert(result.error.message);
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Результат теста ALz</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom right, #eaf3ff, #ffffff);
+      color: #333;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #003366, #0055a5);
+      color: white;
+      padding: 2rem 1rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .result-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2.5rem 2rem;
+      max-width: 600px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      display: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .loading {
+      font-size: 1.3rem;
+      color: #0055a5;
+      animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    h2 { margin-bottom: 1rem; }
+    .score {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+    .pass { color: #007800; }
+    .fail { color: #cc0000; }
+
+    p.recommendation {
+      margin-top: 1.5rem;
+      background: #f9f9f9;
+      border-left: 4px solid #0078d7;
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: #444;
+      text-align: left;
+      line-height: 1.6;
+    }
+
+    footer {
+      background: #f1f1f1;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    a.link {
+      color: #0055a5;
+      text-decoration: underline;
+    }
+    a.link:hover {
+      color: #003366;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Результат теста ALz</h1>
+  </header>
+
+  <main>
+    <div class="loading" id="loadingMessage">
+      <p>Загрузка результата...</p>
+    </div>
+
+    <div class="result-box" id="resultBox">
+      <h2 id="message"></h2>
+      <p class="score" id="score"></p>
+
+      <p class="recommendation">
+        🕒 <strong>Рекомендация:</strong> Тест ALz можно проходить столько раз, сколько вы считаете нужным.<br>
+        Чтобы оценить динамику, повторяйте тест с интервалом 1–2 месяца.<br><br>
+        Подробнее о тесте на сайте
+        <a href="https://alztestapp.com" target="_blank" rel="noopener noreferrer" class="link">
+          alztestapp.com
+        </a>
+      </p>
+
+      <p style="font-size: 0.85rem; color: #555; margin-top: 1.5rem; text-align: center;">
+        ⚠️ <strong>Важно:</strong> Тест ALz не заменяет консультацию врача.<br>
+        Если вас беспокоят изменения в памяти или мышлении, обратитесь к специалисту.
+      </p>
+
+      <div style="margin-top: 1.5rem; background: #fafafa; border-left: 4px solid #0078d7; padding: 1rem; border-radius: 8px; text-align: left;">
+        📘 <strong>Узнайте больше о том, как поддержать здоровье мозга:</strong><br>
+        Моя книга «Alzheimer’s Microlearning» предлагает практические микроуроки о питании, привычках и образе жизни. Они основаны на 15-летнем опыте в медицинской сфере и данных современных исследований.<br>
+        <a href="https://www.amazon.com/Alzheimers-Microlearning-Nikolay-Zuyev-ebook/dp/B0DM6R31DH" target="_blank" rel="noopener noreferrer" style="color:#0055a5; font-weight:bold;">Купить на Amazon</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 ClinicalSelfie Inc. Все права защищены. ALz Test — продукт компании ClinicalSelfie Inc.</p>
+  </footer>
+
+  <script>
+    // Delay before showing result
+    setTimeout(showResults, 1500);
+
+    function showResults() {
+      document.getElementById("loadingMessage").style.display = "none";
+      const resultBox = document.getElementById("resultBox");
+      resultBox.style.display = "block";
+
+      const percent = parseInt(localStorage.getItem("alz_score")) || 0;
+      const message = document.getElementById("message");
+      const score = document.getElementById("score");
+
+      score.textContent = percent + "%";
+
+      if (percent >= 70) {
+        message.textContent = "✅ Тест пройден";
+        score.classList.add("pass");
+      } else {
+        message.textContent = "⚠️ Рекомендуется обратиться к специалисту";
+        score.classList.add("fail");
+      }
+
+      // Clear stored data
+      localStorage.removeItem("alz_score");
+    }
+  </script>
+</body>
+</html>

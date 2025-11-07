@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тест ALz – Вопросы</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom right, #eaf3ff, #ffffff);
+      color: #333;
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, #003366, #0055a5);
+      color: white;
+      text-align: center;
+      padding: 1.5rem 1rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+
+    header img {
+      width: 90px;
+      border-radius: 10px;
+    }
+
+    main {
+      max-width: 700px;
+      margin: 2rem auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      text-align: center;
+      min-height: 300px;
+    }
+
+    .question {
+      display: none;
+    }
+
+    .question.active {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    img.question-image {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+    }
+
+    .question p {
+      font-size: 1.65rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      color: #222;
+    }
+
+    .options button {
+      display: block;
+      width: 100%;
+      padding: 1.5rem 1rem;
+      margin: 0.8rem 0;
+      font-size: 1.45rem;
+      font-weight: 600;
+      border: 2px solid #0078d7;
+      background: white;
+      color: #0078d7;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s, transform 0.1s;
+    }
+
+    .options button:hover {
+      background: #0078d7;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .loading {
+      display: none;
+      font-size: 1.6rem;
+      color: #0055a5;
+      text-align: center;
+      padding: 3rem 1rem;
+      animation: fadeIn 0.8s ease;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      color: #666;
+      background: #f1f1f1;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <img src="alzlogo.png" alt="Логотип ALz Test" />
+    <h1>Тест ALz</h1>
+    <p>Самооценка памяти и когнитивных функций</p>
+  </header>
+
+  <main id="test-container">
+    <!-- Вопросы будут подставляться с помощью JavaScript -->
+  </main>
+
+  <footer>
+    <p>© 2025 ClinicalSelfie Inc. Все права защищены. ALz Test является продуктом компании ClinicalSelfie Inc.</p>
+  </footer>
+
+  <script>
+    const questions = [
+      { img: "1.png", text: "Запомните три изображения. Через несколько минут их нужно будет вспомнить.", options: ["Продолжить"], correct: null },
+      { img: "2.png", text: "Какой мяч ближе к вам?", options: ["1", "2", "Одинаково"], correct: "1" },
+      { img: "3.png", text: "В каком стакане больше воды?", options: ["1", "2", "Одинаковое количество"], correct: "Одинаковое количество" },
+      { img: "4.png", text: "Какой стакан больше?", options: ["1", "2", "Оба одинаковые"], correct: "Оба одинаковые" },
+      { img: "5.png", text: "Какой цвет использован меньше?", options: ["Красный", "Синий", "Зелёный", "Невозможно определить"], correct: "Синий" },
+      { img: "6.png", text: "В каком стакане больше воды?", options: ["1", "2", "Одинаково"], correct: "1" },
+      { img: "7.png", text: "В каком стакане больше воды?", options: ["1", "2", "Одинаковое количество"], correct: "Одинаковое количество" },
+      { img: "8.png", text: "Какое изображение отсутствует?", options: ["Коробка", "Кораблик", "Дерево", "Я не помню"], correct: "Кораблик" },
+      { img: "9.png", text: "Какая коробка нравится зелёному коту?", options: ["Зелёная", "Коричневая", "Белая", "Невозможно определить"], correct: "Коричневая" },
+      { img: "10.png", text: "Какая ложка к вам ближе?", options: ["1", "2", "Невозможно определить"], correct: "2" },
+      { img: "11.png", text: "В каком стакане больше воды?", options: ["1", "2", "Одинаковое количество"], correct: "Одинаковое количество" },
+      { img: "12.png", text: "Какая бутылка к вам ближе?", options: ["1", "2", "3", "Невозможно определить"], correct: "2" },
+      { img: "13.png", text: "Закончите последовательность чисел", options: ["7", "8", "9", "5"], correct: "8" },
+      { img: "14.png", text: "Что в чашке?", options: ["Ложка", "Вилка", "Нож"], correct: "Ложка" },
+      { img: "15.png", text: "Какой стакан больше?", options: ["1", "2", "Оба одинаковые"], correct: "Оба одинаковые" },
+      { img: "16.png", text: "Какой ботинок надевается на правую ногу?", options: ["1", "2", "Любой"], correct: "1" }
+    ];
+
+    let current = 0;
+    let score = 0;
+    const main = document.getElementById("test-container");
+
+    function showQuestion(index) {
+      const q = questions[index];
+      main.innerHTML = `
+        <div class="question active">
+          <img src="${q.img}" alt="Вопрос ${index + 1}" class="question-image" />
+          <p>${q.text}</p>
+          <div class="options">
+            ${q.options.map(opt => `<button onclick="answerQuestion('${opt}')">${opt}</button>`).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function answerQuestion(selected) {
+      const q = questions[current];
+      if (q.correct && selected === q.correct) score++;
+      nextQuestion();
+    }
+
+    function nextQuestion() {
+      current++;
+      if (current < questions.length) {
+        showQuestion(current);
+      } else {
+        finishTest();
+      }
+    }
+
+    function finishTest() {
+      const totalScored = questions.filter(q => q.correct).length;
+      const percent = Math.round((score / totalScored) * 100);
+      localStorage.setItem("alz_score", percent);
+
+      main.innerHTML = `
+        <div class="loading">
+          <p>Обработка результатов...</p>
+        </div>
+      `;
+
+      setTimeout(() => {
+        window.location.href = "payment.html";
+      }, 2000);
+    }
+
+    showQuestion(current);
+  </script>
+</body>
+</html>
