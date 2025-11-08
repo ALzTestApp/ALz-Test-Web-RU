@@ -110,22 +110,29 @@
     <p>© 2025 ClinicalSelfie Inc. Все права защищены. ALz Test — продукт компании ClinicalSelfie Inc.</p>
   </footer>
 
-  <!-- Stripe Checkout Integration: placed at the bottom for best practice -->
-  <script src="https://js.stripe.com/v3/"></script>
+  <!-- Custom Stripe Checkout Handler -->
   <script>
-    const stripe = Stripe("pk_live_T4i52byhECGe4FSNcO8NaZSk");
+    async function payWithStripe() {
+      try {
+        const response = await fetch("/api/create-checkout-session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-    function payWithStripe() {
-      stripe.redirectToCheckout({
-        lineItems: [{ price: "price_1SQf3lBYg24sYSSeW9aDGMje", quantity: 1 }],
-        mode: "payment",
-        successUrl: window.location.origin + "/result.html",
-        cancelUrl: window.location.origin + "/payment.html",
-      }).then(function (result) {
-        if (result.error) {
-          alert(result.error.message);
+        const data = await response.json();
+        
+        if (data.url) {
+          // Redirect the user to Stripe Checkout
+          window.location.href = data.url;
+        } else {
+          alert("Error: " + (data.error || "Unknown error occurred"));
         }
-      });
+      } catch (error) {
+        alert("Payment failed: " + error.message);
+        console.error(error);
+      }
     }
   </script>
 
