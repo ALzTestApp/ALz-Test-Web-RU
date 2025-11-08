@@ -1,11 +1,4 @@
 {
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "https://www.alztest.org",
-      "permanent": true
-    }
-  ],
   "rewrites": [
     {
       "source": "/(.*)",
