@@ -3,8 +3,15 @@
     {
       "source": "/",
       "destination": "https://www.alztest.org",
-      "permanent": true,
-      "statusCode": 301
+      "permanent": true
     }
-  ]
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
+    }
+  ],
+  "cleanUrls": true,
+  "trailingSlash": false
 }
