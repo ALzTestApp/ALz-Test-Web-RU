@@ -39,6 +39,7 @@
       max-width: 600px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.08);
       transition: opacity 0.3s ease;
+      text-align: center;
     }
 
     h2 { margin-bottom: 1rem; font-size: 1.6rem; }
@@ -57,9 +58,19 @@
       font-size: 1.1rem;
     }
 
-    button.button:hover {
-      background: #005bb5;
-      transform: translateY(-2px);
+    button.button:hover { background: #005bb5; transform: translateY(-2px); }
+
+    button.button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .status {
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      color: #444;
+      min-height: 1.2em;
     }
 
     footer {
@@ -69,13 +80,8 @@
       color: #666;
     }
 
-    a.link {
-      color: #0055a5;
-      text-decoration: underline;
-    }
-    a.link:hover {
-      color: #003366;
-    }
+    a.link { color: #0055a5; text-decoration: underline; }
+    a.link:hover { color: #003366; }
   </style>
 </head>
 
@@ -89,8 +95,8 @@
       <h2>Тест завершён</h2>
       <p>Спасибо за прохождение теста ALz! Чтобы просмотреть ваш результат и получить рекомендации, оплатите интерпретацию теста.</p>
 
-      <!-- Button to trigger Stripe Checkout -->
-      <button class="button" onclick="payWithStripe()">Оплатить $9.99</button>
+      <button id="payBtn" class="button" type="button" onclick="payWithStripe()">Оплатить $9.99</button>
+      <div id="status" class="status"></div>
 
       <p style="margin-top: 1.5rem; font-size: 0.85rem; color: #555;">
         🔒 Платёж будет обработан безопасно через Stripe. После оплаты вы будете перенаправлены на страницу с результатом.
@@ -110,28 +116,48 @@
     <p>© 2025 ClinicalSelfie Inc. Все права защищены. ALz Test — продукт компании ClinicalSelfie Inc.</p>
   </footer>
 
-  <!-- Custom Stripe Checkout Handler -->
   <script>
+    function setStatus(msg) {
+      document.getElementById("status").textContent = msg || "";
+    }
+
     async function payWithStripe() {
+      const btn = document.getElementById("payBtn");
+      btn.disabled = true;
+      setStatus("Обработка платежа… пожалуйста, подождите.");
+
       try {
         const response = await fetch("/api/create-checkout-session", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" }
         });
 
-        const data = await response.json();
-        
-        if (data.url) {
-          // Redirect the user to Stripe Checkout
-          window.location.href = data.url;
-        } else {
-          alert("Error: " + (data.error || "Unknown error occurred"));
+        // Read as text first, then parse JSON safely
+        const text = await response.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          console.error("Non-JSON response:", text);
+          throw new Error("Сервер вернул некорректный ответ. Откройте страницу ещё раз и повторите попытку.");
         }
+
+        if (!response.ok) {
+          throw new Error(data.error || `Ошибка сервера (${response.status})`);
+        }
+
+        if (data.url) {
+          // Normal flow: redirect to Stripe Checkout
+          window.location.href = data.url;
+          return;
+        }
+
+        throw new Error(data.error || "Не удалось создать платежную сессию.");
       } catch (error) {
+        console.error("Payment error:", error);
+        setStatus("");
         alert("Payment failed: " + error.message);
-        console.error(error);
+        btn.disabled = false;
       }
     }
   </script>
