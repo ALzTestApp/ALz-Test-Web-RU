@@ -133,31 +133,44 @@
   </footer>
 
   <script>
-    // Delay before showing result
-    setTimeout(showResults, 1500);
+  // Delay before showing result
+  setTimeout(showResults, 1500);
 
-    function showResults() {
-      document.getElementById("loadingMessage").style.display = "none";
-      const resultBox = document.getElementById("resultBox");
-      resultBox.style.display = "block";
+  function showResults() {
+    document.getElementById("loadingMessage").style.display = "none";
+    const resultBox = document.getElementById("resultBox");
+    resultBox.style.display = "block";
 
-      const percent = parseInt(localStorage.getItem("alz_score")) || 0;
-      const message = document.getElementById("message");
-      const score = document.getElementById("score");
+    const percent = parseInt(localStorage.getItem("alz_score"), 10) || 0;
+    const messageEl = document.getElementById("message");
+    const scoreEl = document.getElementById("score");
 
-      score.textContent = percent + "%";
+    // Text after % based on performance
+    let performanceText = "";
+    let headerText = "";
 
-      if (percent >= 70) {
-        message.textContent = "✅ Тест пройден";
-        score.classList.add("pass");
-      } else {
-        message.textContent = "⚠️ Рекомендуется обратиться к специалисту";
-        score.classList.add("fail");
-      }
-
-      // Clear stored data
-      localStorage.removeItem("alz_score");
+    if (percent === 100) {
+      performanceText = "— все ответы правильные, нет ни одной ошибки!";
+      headerText = "✅ Тест пройден";
+      scoreEl.classList.add("pass");
+    } else if (percent >= 70 && percent < 100) {
+      performanceText = "— почти все ответы правильные, всего несколько ошибок!";
+      headerText = "✅ Тест пройден";
+      scoreEl.classList.add("pass");
+    } else {
+      performanceText = "— очень много ошибок!";
+      headerText = "⚠️ Рекомендуется консультация специалиста";
+      scoreEl.classList.add("fail");
     }
-  </script>
+
+    // Show score with % and words after it
+    scoreEl.textContent = `${percent}% ${performanceText}`;
+    messageEl.textContent = headerText;
+
+    // Clear stored data
+    localStorage.removeItem("alz_score");
+  }
+</script>
+
 </body>
 </html>
